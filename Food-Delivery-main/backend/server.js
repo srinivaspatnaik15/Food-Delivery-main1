@@ -12,14 +12,11 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 // middlewares
-
-// Use frontend URL from env (Render, Vercel, etc.)
 app.use(cors({
   origin: process.env.FRONTEND_URL || "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
 }));
-
 app.use(express.json());
 
 // DB connection
@@ -28,7 +25,7 @@ connectDB();
 // api endpoints
 app.use("/api/food", foodRouter);
 app.use("/images", express.static("uploads"));
-app.use("/api/user", userRouter);
+app.use("/api/user", userRouter); // <--- mounts userRouter here!
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
 
