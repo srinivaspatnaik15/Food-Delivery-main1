@@ -7,9 +7,7 @@ const foodSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     image: { type: String, required: true },
     category: { type: String, required: true },
-  },
-  { timestamps: true } // ✅ will auto-add createdAt, updatedAt
-);
+  });
 
 // ✅ Explicitly set collection name = "food" (your View name in MongoDB)
 const foodModel =

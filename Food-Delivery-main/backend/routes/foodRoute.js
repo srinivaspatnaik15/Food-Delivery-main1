@@ -1,48 +1,23 @@
 import express from "express";
-import foodModel from "../models/foodModel.js"; // use the same name as your export
+import { addFood, listFood, removeFood } from "../controllers/foodController.js";
+import multer from "multer";
+import authMiddleware from "../middleware/auth.js";
 
-const router = express.Router();
+const foodRouter = express.Router();
 
-// ✅ GET all foods (for /api/food or /api/food/list)
-router.get("/", async (req, res) => {
-  try {
-    const foods = await foodModel.find();
-    res.json({ success: true, data: foods });
-  } catch (error) {
-    console.error("❌ Food route error:", error.message);
-    res.status(500).json({ success: false, error: "Server error: " + error.message });
-  }
-});
+// Image Storage Engine
 
-// ✅ Alias route for /api/food/list (same result)
-router.get("/list", async (req, res) => {
-  try {
-    const foods = await foodModel.find();
-    res.json({ success: true, data: foods });
-  } catch (error) {
-    console.error("❌ Food route error:", error.message);
-    res.status(500).json({ success: false, error: "Server error: " + error.message });
-  }
-});
-
-// ✅ Add a new food (only for admin)
-router.post("/", async (req, res) => {
-  try {
-    const { name, description, price, category, image } = req.body;
-
-    // basic validation
-    if (!name || !description || !price || !category || !image) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
+const storage= multer.diskStorage({
+    destination:"uploads",
+    filename:(req,file,cb)=>{
+        return cb(null,`${Date.now()}${file.originalname}`)
     }
+})
 
-    const newFood = new foodModel(req.body);
-    await newFood.save();
+const upload= multer({storage:storage})
 
-    res.status(201).json({ success: true, data: newFood });
-  } catch (error) {
-    console.error("❌ Error adding food:", error.message);
-    res.status(500).json({ success: false, error: "Server error: " + error.message });
-  }
-});
+foodRouter.post("/add",upload.single("image"),authMiddleware,addFood);
+foodRouter.get("/list",listFood);
+foodRouter.post("/remove",authMiddleware,removeFood);
 
-export default router;
+export default foodRouter;

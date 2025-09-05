@@ -1,84 +1,76 @@
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import validator from "validator";
 
-const createToken = (id) => {
-  if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET is not defined");
-  }
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-};
+// login user
 
-// Login user
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.status(400).json({ success: false, message: "User doesn't exist" });
+      return res.json({ success: false, message: "User Doesn't exist" });
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch =await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: "Invalid Credentials" });
+      return res.json({ success: false, message: "Invalid Credentials" });
     }
-
+    const role=user.role;
     const token = createToken(user._id);
-    res.json({
-      success: true,
-      token,
-      role: user.role,
-      user: { id: user._id, name: user.name, email: user.email },
-    });
+    res.json({ success: true, token,role });
   } catch (error) {
-    console.error("Login Error:", error);
-    res.status(500).json({ success: false, message: "Server error while login" });
+    console.log(error);
+    res.json({ success: false, message: "Error" });
   }
 };
 
-// Register user
+// Create token
+
+const createToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET);
+};
+
+// register user
+
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
   try {
+    // checking user is already exist
     const exists = await userModel.findOne({ email });
     if (exists) {
-      return res.status(400).json({ success: false, message: "User already exists" });
+      return res.json({ success: false, message: "User already exists" });
     }
 
+    // validating email format and strong password
     if (!validator.isEmail(email)) {
-      return res.status(400).json({ success: false, message: "Please enter valid email" });
+      return res.json({ success: false, message: "Please enter valid email" });
     }
     if (password.length < 8) {
-      return res.status(400).json({
+      return res.json({
         success: false,
-        message: "Password must be at least 8 characters long",
+        message: "Please enter strong password",
       });
     }
 
-    const saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
+    // hashing user password
+
+    const salt = await bcrypt.genSalt(Number(process.env.SALT));
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new userModel({
-      name,
-      email,
+      name: name,
+      email: email,
       password: hashedPassword,
-      role: "user", // ✅ ensure default
     });
 
     const user = await newUser.save();
+    const role=user.role;
     const token = createToken(user._id);
-
-    res.status(201).json({
-      success: true,
-      token,
-      role: user.role,
-      user: { id: user._id, name: user.name, email: user.email },
-    });
+    res.json({ success: true, token, role});
   } catch (error) {
-    console.error("Register Error:", error);
-    res.status(500).json({ success: false, message: "Server error while registering" });
+    console.log(error);
+    res.json({ success: false, message: "Error" });
   }
 };
 

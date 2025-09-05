@@ -14,11 +14,9 @@ const orderSchema = new mongoose.Schema(
     amount: { type: Number, required: true },
     address: { type: Object, required: true },
     status: { type: String, default: "Food Processing" },
-    date: { type: Date, default: Date.now }, // ✅ fixed
+    date: { type: Date, default: Date.now()}, // ✅ fixed
     payment: { type: Boolean, default: false },
-  },
-  { timestamps: true } // ✅ adds createdAt & updatedAt automatically
-);
+  });
 
 const orderModel =
   mongoose.models.order || mongoose.model("order", orderSchema);
