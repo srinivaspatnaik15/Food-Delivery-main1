@@ -1,23 +1,29 @@
 import express from "express";
-import { addFood, listFood, removeFood } from "../controllers/foodController.js";
-import multer from "multer";
-import authMiddleware from "../middleware/auth.js";
+import Food from "../models/foodModel.js";  // make sure you have this model
 
-const foodRouter = express.Router();
+const router = express.Router();
 
-// Image Storage Engine
+// ✅ GET all foods
+router.get("/", async (req, res) => {
+  try {
+    const foods = await Food.find();
+    res.json(foods);
+  } catch (error) {
+    console.error("❌ Food route error:", error.message);
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
 
-const storage= multer.diskStorage({
-    destination:"uploads",
-    filename:(req,file,cb)=>{
-        return cb(null,`${Date.now()}${file.originalname}`)
-    }
-})
+// ✅ Add a new food (for admin use, optional)
+router.post("/", async (req, res) => {
+  try {
+    const newFood = new Food(req.body);
+    await newFood.save();
+    res.status(201).json(newFood);
+  } catch (error) {
+    console.error("❌ Error adding food:", error.message);
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
 
-const upload= multer({storage:storage})
-
-foodRouter.post("/add",upload.single("image"),authMiddleware,addFood);
-foodRouter.get("/list",listFood);
-foodRouter.post("/remove",authMiddleware,removeFood);
-
-export default foodRouter;
+export default router;
