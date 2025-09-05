@@ -57,59 +57,61 @@ const LoginPopup = ({ setShowLogin }) => {
 
   return (
     <div className="login-popup">
-      <form className="login-popup-container" onSubmit={onLogin}>
+      <form onSubmit={onLogin} className="login-popup-container">
         <div className="login-popup-title">
           <h2>{currentState}</h2>
           <img
+            onClick={() => setShowLogin(false)}
             src={assets.cross_icon}
             alt="close"
-            onClick={() => setShowLogin(false)}
           />
         </div>
-
-        {currentState === "Sign Up" && (
+        <div className="login-popup-inputs">
+          {currentState === "Login" ? null : (
+            <input
+              name="name"
+              onChange={onChangeHandler}
+              value={data.name}
+              type="text"
+              placeholder="Your name"
+              required
+            />
+          )}
           <input
-            type="text"
-            name="name"
-            placeholder="Your name"
-            value={data.name}
+            name="email"
             onChange={onChangeHandler}
+            value={data.email}
+            type="email"
+            placeholder="Your email"
             required
           />
+          <input
+            name="password"
+            onChange={onChangeHandler}
+            value={data.password}
+            type="password"
+            placeholder="Your password"
+            required
+          />
+        </div>
+        <button type="submit">
+          {currentState === "Sign Up" ? "Create Account" : "Login"}
+        </button>
+        <div className="login-popup-condition">
+          <input type="checkbox" required />
+          <p>By continuing, I agree to the terms of use & privacy policy.</p>
+        </div>
+        {currentState === "Login" ? (
+          <p>
+            Create a new account?{" "}
+            <span onClick={() => setCurrentState("Sign Up")}>Click here</span>
+          </p>
+        ) : (
+          <p>
+            Already have an account?{" "}
+            <span onClick={() => setCurrentState("Login")}>Login here</span>
+          </p>
         )}
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Your email"
-          value={data.email}
-          onChange={onChangeHandler}
-          required
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={data.password}
-          onChange={onChangeHandler}
-          required
-        />
-
-        <button type="submit">{currentState === "Login" ? "Login" : "Sign Up"}</button>
-
-        <p>
-          {currentState === "Login"
-            ? "Don't have an account?"
-            : "Already have an account?"}
-          <span
-            onClick={() =>
-              setCurrentState(currentState === "Login" ? "Sign Up" : "Login")
-            }
-          >
-            {currentState === "Login" ? " Sign Up" : " Login"}
-          </span>
-        </p>
       </form>
     </div>
   );
