@@ -15,12 +15,10 @@ const LoginPopup = ({ setShowLogin }) => {
   });
 
   const onChangeHandler = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setData((data) => ({ ...data, [name]: value }));
+    const { name, value } = event.target;
+    setData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Corrected onLogin function
   const onLogin = async (event) => {
     event.preventDefault();
     try {
@@ -31,19 +29,29 @@ const LoginPopup = ({ setShowLogin }) => {
         newUrl += "/api/user/register";
       }
 
-      const response = await axios.post(newUrl, data);
+      const response = await axios.post(newUrl, data, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-      if (response.data.success) {
-        setToken(response.data.token);
-        localStorage.setItem("token", response.data.token);
-        toast.success("Login Successfully");
+      const result = response.data;
+
+      if (result.success) {
+        setToken(result.token);
+        localStorage.setItem("token", result.token);
+        toast.success(
+          currentState === "Login"
+            ? "Login Successful"
+            : "Account Created Successfully"
+        );
         setShowLogin(false);
       } else {
-        toast.error(response.data.message || "Something went wrong");
+        toast.error(result.message || "Something went wrong");
       }
     } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Server Error");
+      console.error("Login/Register error:", error);
+      toast.error(
+        error.response?.data?.message || error.message || "Network/Server Error"
+      );
     }
   };
 
@@ -55,13 +63,11 @@ const LoginPopup = ({ setShowLogin }) => {
           <img
             onClick={() => setShowLogin(false)}
             src={assets.cross_icon}
-            alt=""
+            alt="close"
           />
         </div>
         <div className="login-popup-inputs">
-          {currentState === "Login" ? (
-            <></>
-          ) : (
+          {currentState === "Login" ? null : (
             <input
               name="name"
               onChange={onChangeHandler}
