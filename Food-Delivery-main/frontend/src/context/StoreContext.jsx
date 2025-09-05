@@ -7,10 +7,10 @@ export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
-  const url = "https://food-delivery-main1.onrender.com/";
+  const url = import.meta.env.VITE_API_URL; // Use env var for backend URL
   const [token, setToken] = useState("");
   const [food_list, setFoodList] = useState([]);
-  const [user, setUser] = useState(null); // ✅ store user info
+  const [user, setUser] = useState(null);
 
   const addToCart = async (itemId) => {
     if (!cartItems[itemId]) {
@@ -20,9 +20,9 @@ const StoreContextProvider = (props) => {
     }
     if (token) {
       const response = await axios.post(
-        url + "/api/cart/add",
+        `${url}/api/cart/add`,
         { itemId },
-        { headers: { token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.data.success) {
         toast.success("Item Added to Cart");
@@ -36,9 +36,9 @@ const StoreContextProvider = (props) => {
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
     if (token) {
       const response = await axios.post(
-        url + "/api/cart/remove",
+        `${url}/api/cart/remove`,
         { itemId },
-        { headers: { token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.data.success) {
         toast.success("Item Removed from Cart");
@@ -55,7 +55,6 @@ const StoreContextProvider = (props) => {
         let itemInfo = food_list.find(
           (product) => product?._id?.toString() === item?.toString()
         );
-
         if (itemInfo) {
           totalAmount += itemInfo.price * cartItems[item];
         }
@@ -65,7 +64,7 @@ const StoreContextProvider = (props) => {
   };
 
   const fetchFoodList = async () => {
-    const response = await axios.get(url + "/api/food/list");
+    const response = await axios.get(`${url}/api/food/list`);
     if (response.data.success) {
       setFoodList(response.data.data);
     } else {
@@ -75,9 +74,9 @@ const StoreContextProvider = (props) => {
 
   const loadCardData = async (token) => {
     const response = await axios.post(
-      url + "/api/cart/get",
+      `${url}/api/cart/get`,
       {},
-      { headers: { token } }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
     setCartItems(response.data.cartData);
   };
@@ -88,15 +87,12 @@ const StoreContextProvider = (props) => {
       const savedToken = localStorage.getItem("token");
       if (savedToken) {
         setToken(savedToken);
-
-        // ✅ Decode token to extract userId
         try {
           const decoded = jwtDecode(savedToken);
-          setUser({ _id: decoded.id || decoded._id }); // depends on backend payload
+          setUser({ _id: decoded.id || decoded._id });
         } catch (err) {
           console.error("Invalid token:", err);
         }
-
         await loadCardData(savedToken);
       }
     }
@@ -113,7 +109,7 @@ const StoreContextProvider = (props) => {
     url,
     token,
     setToken,
-    user, // ✅ pass user into context
+    user,
   };
 
   return (
