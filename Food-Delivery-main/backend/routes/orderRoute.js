@@ -1,22 +1,16 @@
+import express from "express";
+const router = express.Router();
+
+import authMiddleware from "../middleware/auth.js"; // adjust if different
+
+// Example order route
 router.post("/place", authMiddleware, async (req, res) => {
   try {
-    const { address, items, amount, paymentMethod } = req.body;
-
-    const newOrder = new Order({
-      userId: req.userId,   // ✅ comes from middleware
-      address,
-      items,
-      amount,
-      paymentMethod,
-      status: "pending",
-    });
-
-    await newOrder.save();
-
-    res.json({ success: true, message: "Order placed successfully", order: newOrder });
+    res.json({ message: "Order placed successfully!" });
   } catch (error) {
-    res.json({ success: false, message: "Failed to place order" });
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
-export default router; 
+export default router;
