@@ -3,16 +3,14 @@ import "./FoodItem.css";
 import { assets } from "../../assets/frontend_assets/assets";
 import { StoreContext } from "../../context/StoreContext";
 
-// Fallbacks
 const FALLBACK_NAME = "Unknown Dish";
 const FALLBACK_DESC = "No description available.";
 const FALLBACK_PRICE = "N/A";
 
-const FoodItem = ({ _id, name, price, description }) => {
+const FoodItem = ({ id, name, price, description }) => {
   const { cartItems, addToCart, removeFromCart } = useContext(StoreContext);
 
-  // Use MongoDB _id directly
-  const itemId = _id;
+  const itemId = id?.toString() || "unknown_id";
   const itemName = name || FALLBACK_NAME;
   const itemDesc = description || FALLBACK_DESC;
   const itemPrice = price !== undefined && price !== null ? price : FALLBACK_PRICE;

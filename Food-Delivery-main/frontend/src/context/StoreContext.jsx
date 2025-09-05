@@ -66,20 +66,21 @@ const StoreContextProvider = (props) => {
   };
 
   // ✅ Get total amount
-  const getTotalCartAmount = () => {
-    let totalAmount = 0;
-    for (const item in cartItems) {
-      if (cartItems[item] > 0) {
-        const itemInfo = food_list.find(
-          (product) => product?._id?.toString() === item?.toString()
-        );
-        if (itemInfo) {
-          totalAmount += itemInfo.price * cartItems[item];
-        }
+const getTotalCartAmount = () => {
+  let totalAmount = 0;
+  for (const item in cartItems) {
+    if (cartItems[item] > 0) {
+      let itemInfo = food_list.find(
+        (product) => product._id.toString() === item.toString()
+      );
+      if (itemInfo) {
+        totalAmount += itemInfo.price * cartItems[item];
       }
     }
-    return totalAmount;
-  };
+  }
+  return totalAmount;
+};
+
 
   // ✅ Fetch food list
   const fetchFoodList = async () => {
