@@ -1,16 +1,24 @@
 import express from "express";
+import authMiddleware from "../middleware/auth.js";
+import {
+  placeOrder,
+  userOrders,
+  listOrders,
+  updateStatus,
+} from "../controllers/orderController.js";
+
 const router = express.Router();
 
-import authMiddleware from "../middleware/auth.js"; // adjust if different
+// Place an order (user)
+router.post("/place", authMiddleware, placeOrder);
 
-// Example order route
-router.post("/place", authMiddleware, async (req, res) => {
-  try {
-    res.json({ message: "Order placed successfully!" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server error" });
-  }
-});
+// Get user orders
+router.post("/userorders", authMiddleware, userOrders);
+
+// Get all orders (admin only)
+router.post("/list", authMiddleware, listOrders);
+
+// Update order status (admin only)
+router.post("/status", authMiddleware, updateStatus);
 
 export default router;

@@ -1,12 +1,12 @@
 import express from "express";
-import Food from "../models/foodModel.js";  // Make sure this model exists
+import foodModel from "../models/foodModel.js"; // use the same name as your export
 
 const router = express.Router();
 
-// GET all foods (for /api/food/)
+// ✅ GET all foods (for /api/food or /api/food/list)
 router.get("/", async (req, res) => {
   try {
-    const foods = await Food.find();
+    const foods = await foodModel.find();
     res.json({ success: true, data: foods });
   } catch (error) {
     console.error("❌ Food route error:", error.message);
@@ -14,10 +14,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET all foods (for /api/food/list)
+// ✅ Alias route for /api/food/list (same result)
 router.get("/list", async (req, res) => {
   try {
-    const foods = await Food.find();
+    const foods = await foodModel.find();
     res.json({ success: true, data: foods });
   } catch (error) {
     console.error("❌ Food route error:", error.message);
@@ -25,11 +25,19 @@ router.get("/list", async (req, res) => {
   }
 });
 
-// Add a new food (for admin use, optional)
+// ✅ Add a new food (only for admin)
 router.post("/", async (req, res) => {
   try {
-    const newFood = new Food(req.body);
+    const { name, description, price, category, image } = req.body;
+
+    // basic validation
+    if (!name || !description || !price || !category || !image) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    const newFood = new foodModel(req.body);
     await newFood.save();
+
     res.status(201).json({ success: true, data: newFood });
   } catch (error) {
     console.error("❌ Error adding food:", error.message);
