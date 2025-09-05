@@ -18,3 +18,5 @@ router.post("/place", authMiddleware, async (req, res) => {
     res.json({ success: false, message: "Failed to place order" });
   }
 });
+
+export default router; 
