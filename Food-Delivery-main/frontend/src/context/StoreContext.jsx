@@ -63,14 +63,18 @@ const StoreContextProvider = (props) => {
     return totalAmount;
   };
 
-  const fetchFoodList = async () => {
-    const response = await axios.get(`${url}/api/food/list`);
+const fetchFoodList = async () => {
+  try {
+    const response = await axios.get(url + "/api/food/list");
     if (response.data.success) {
       setFoodList(response.data.data);
     } else {
       alert("Error! Products are not fetching..");
     }
-  };
+  } catch (err) {
+    alert("Network Error! Products are not fetching..");
+  }
+};
 
   const loadCardData = async (token) => {
     const response = await axios.post(

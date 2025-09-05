@@ -13,13 +13,13 @@ const FoodDisplay = ({ category }) => {
           if ((category === "All" || category === item.category))
             return (
               <FoodItem
-              key={item._id}
-              id={item._id}   // ✅ important
-              name={item.name}
-              price={item.price}
-              description={item.description}
-              image={item.image}
-            />
+                key={item._id}
+                id={item._id}
+                name={item.name}
+                price={item.price}
+                description={item.description}
+                image={item.image}
+              />
             );
         })}
       </div>
