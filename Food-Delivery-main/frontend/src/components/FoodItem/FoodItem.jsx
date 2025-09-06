@@ -1,14 +1,51 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./FoodItem.css";
+import { StoreContext } from "../../context/StoreContext";
 
 const FoodItem = ({ id, name, price, description, image }) => {
+  const { cartItems, addToCart, removeFromCart, url } = useContext(StoreContext);
+
   return (
     <div className="food-item" key={id}>
-      <img src={image} alt={name} className="food-item-img" />
+      <div className="food-item-img-container">
+        <img
+          src={`${url}/images/${image}`} // ✅ serve from backend /uploads
+          alt={name}
+          className="food-item-image"
+        />
+
+        {/* If item not in cart → show + button */}
+        {!cartItems[id] ? (
+          <img
+            src="/assets/add_icon.png" // ✅ make sure you have this image in public/assets
+            alt="add"
+            className="add"
+            onClick={() => addToCart(id)}
+          />
+        ) : (
+          <div className="food-item-counter">
+            <img
+              src="/assets/remove_icon.png" // remove button
+              alt="remove"
+              onClick={() => removeFromCart(id)}
+            />
+            <p>{cartItems[id]}</p>
+            <img
+              src="/assets/add_icon.png" // add button
+              alt="add"
+              onClick={() => addToCart(id)}
+            />
+          </div>
+        )}
+      </div>
+
       <div className="food-item-info">
-        <h3>{name}</h3>
-        <p>{description}</p>
-        <span>${price}</span>
+        <div className="food-item-name-rating">
+          <p>{name}</p>
+          <img src="/assets/rating_stars.png" alt="rating" />
+        </div>
+        <p className="food-item-desc">{description}</p>
+        <p className="food-item-price">${price}</p>
       </div>
     </div>
   );
