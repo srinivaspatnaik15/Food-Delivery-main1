@@ -44,3 +44,4 @@ const placeOrder = async (event) => {
     toast.error("Something went wrong while placing order");
   }
 };
+export default PlaceOrder;
