@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import "./FoodItem.css";
 import { StoreContext } from "../../context/StoreContext";
+import { assets } from "../../assets/frontend_assets/assets"; // ✅ correct path
 
 const FoodItem = ({ id, name, price, description, image }) => {
   const { cartItems, addToCart, removeFromCart, url } = useContext(StoreContext);
@@ -9,15 +10,14 @@ const FoodItem = ({ id, name, price, description, image }) => {
     <div className="food-item" key={id}>
       <div className="food-item-img-container">
         <img
-          src={`${url}/images/${image}`} // ✅ serve from backend /uploads
+          src={`${url}/images/${image}`}
           alt={name}
           className="food-item-image"
         />
 
-        {/* If item not in cart → show + button */}
         {!cartItems[id] ? (
           <img
-            src="/assets/add_icon.png" // ✅ make sure you have this image in public/assets
+            src={assets.add_icon_green}
             alt="add"
             className="add"
             onClick={() => addToCart(id)}
@@ -25,13 +25,13 @@ const FoodItem = ({ id, name, price, description, image }) => {
         ) : (
           <div className="food-item-counter">
             <img
-              src="/assets/remove_icon.png" // remove button
+              src={assets.remove_icon_red}
               alt="remove"
               onClick={() => removeFromCart(id)}
             />
             <p>{cartItems[id]}</p>
             <img
-              src="/assets/add_icon.png" // add button
+              src={assets.add_icon_green}
               alt="add"
               onClick={() => addToCart(id)}
             />
@@ -42,7 +42,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
       <div className="food-item-info">
         <div className="food-item-name-rating">
           <p>{name}</p>
-          <img src="/assets/rating_stars.png" alt="rating" />
+          <img src={assets.rating_starts} alt="rating" />
         </div>
         <p className="food-item-desc">{description}</p>
         <p className="food-item-price">${price}</p>
