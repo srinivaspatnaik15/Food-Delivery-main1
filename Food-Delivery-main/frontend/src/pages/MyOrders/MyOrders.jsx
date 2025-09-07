@@ -8,23 +8,29 @@ const MyOrders = () => {
   const { url, token } = useContext(StoreContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const fetchOrders = async () => {
+    if (!token) return;
+
     try {
       setLoading(true);
+      setError("");
+
       const response = await axios.post(
-        url + "/api/order/userorders",
+        `${url}/api/order/userorders`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } } // ✅ FIXED
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.data.success && Array.isArray(response.data.data)) {
-        setData(response.data.data.reverse()); // latest orders first
+        setData(response.data.data.reverse()); // show latest orders first
       } else {
         setData([]);
       }
-    } catch (error) {
-      console.error("Error fetching orders:", error);
+    } catch (err) {
+      console.error("❌ Error fetching orders:", err);
+      setError("Failed to fetch orders. Please try again.");
       setData([]);
     } finally {
       setLoading(false);
@@ -32,18 +38,16 @@ const MyOrders = () => {
   };
 
   useEffect(() => {
-    if (token) {
-      fetchOrders();
-    }
-  }, [token]);
+    fetchOrders();
+  }, [token]); // refetch when token changes
 
   return (
     <div className="my-orders">
       <h2>My Orders</h2>
 
       {loading && <p>Loading your orders...</p>}
-
-      {!loading && data.length === 0 && (
+      {error && <p className="error">{error}</p>}
+      {!loading && !error && data.length === 0 && (
         <p className="no-orders">No orders yet. Start shopping!</p>
       )}
 
@@ -51,36 +55,38 @@ const MyOrders = () => {
         {data.map((order, index) => {
           const orderDate = order?.createdAt
             ? new Date(order.createdAt)
-            : new Date(); // fallback
+            : null;
 
           return (
-            <div key={index} className="my-orders-order">
+            <div key={order._id || index} className="my-orders-order">
               <img src={assets.parcel_icon} alt="Parcel Icon" />
 
               <p>
                 {order?.items?.length > 0
                   ? order.items.map((item, idx) => (
                       <span key={idx}>
-                        {item.name || "Item"} X {item.quantity || 0}
+                        {item.name || "Item"} × {item.quantity || 0}
                         {idx !== order.items.length - 1 && ", "}
                       </span>
                     ))
                   : "No items"}
               </p>
 
-              <p>₹{order?.amount || 0}.00</p>
+              <p>₹{order?.amount?.toFixed(2) || "0.00"}</p>
               <p>Items: {order?.items?.length || 0}</p>
               <p>
                 <span>&#x25cf;</span>
                 <b> {order?.status || "Pending"}</b>
               </p>
 
-              <p className="order-date">
-                Ordered on: {orderDate.toLocaleDateString()} at{" "}
-                {orderDate.toLocaleTimeString()}
-              </p>
+              {orderDate && (
+                <p className="order-date">
+                  Ordered on: {orderDate.toLocaleDateString()} at{" "}
+                  {orderDate.toLocaleTimeString()}
+                </p>
+              )}
 
-              <button onClick={fetchOrders}>Track Order</button>
+              <button onClick={fetchOrders}>🔄 Refresh</button>
             </div>
           );
         })}
