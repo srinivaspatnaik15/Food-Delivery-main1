@@ -64,10 +64,10 @@ const PlaceOrder = () => {
     toast.success("Order placed successfully 🎉");
     navigate("/myorders");
 
-    // ✅ Optional: save order to backend in background
+    // ✅ Save order to backend
     try {
       await axios.post(`${url}/api/order/place`, orderData, {
-        headers: { token },
+        headers: { Authorization: `Bearer ${token}` }, // ✅ FIXED
       });
     } catch (error) {
       console.error("❌ Backend save failed:", error);
@@ -197,3 +197,4 @@ const PlaceOrder = () => {
 };
 
 export default PlaceOrder;
+

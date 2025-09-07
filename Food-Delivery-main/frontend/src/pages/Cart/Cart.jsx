@@ -13,6 +13,10 @@ const Cart = () => {
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
+  const totalAmount = getTotalCartAmount ? getTotalCartAmount() : 0;
+  const deliveryFee = totalAmount === 0 ? 0 : 2;
+
+  const hasItems = Object.values(cartItems).some((qty) => qty > 0);
 
   return (
     <div className="cart">
@@ -28,7 +32,7 @@ const Cart = () => {
         <br />
         <hr />
 
-        {food_list.length > 0 ? (
+        {food_list.length > 0 && hasItems ? (
           food_list.map((item) => {
             const quantity = cartItems[item._id] || 0;
             if (quantity > 0) {
@@ -36,7 +40,11 @@ const Cart = () => {
                 <div key={item._id}>
                   <div className="cart-items-title cart-items-item">
                     <img
-                      src={item.image ? url + "/images/" + item.image : "https://via.placeholder.com/50"}
+                      src={
+                        item.image
+                          ? `${url}/images/${item.image}`
+                          : "https://via.placeholder.com/50"
+                      }
                       alt={item.name || "Food"}
                     />
                     <p>{item.name || "Unknown Dish"}</p>
@@ -61,47 +69,42 @@ const Cart = () => {
         )}
       </div>
 
-      <div className="cart-bottom">
-        <div className="cart-total">
-          <h2>Cart Totals</h2>
-          <div>
-            <div className="cart-total-details">
-              <p>Subtotals</p>
-              <p>₹{getTotalCartAmount ? getTotalCartAmount() : 0}</p>
+      {hasItems && (
+        <div className="cart-bottom">
+          <div className="cart-total">
+            <h2>Cart Totals</h2>
+            <div>
+              <div className="cart-total-details">
+                <p>Subtotals</p>
+                <p>₹{totalAmount}</p>
+              </div>
+              <hr />
+              <div className="cart-total-details">
+                <p>Delivery Fee</p>
+                <p>₹{deliveryFee}</p>
+              </div>
+              <hr />
+              <div className="cart-total-details">
+                <b>Total</b>
+                <b>₹{totalAmount + deliveryFee}</b>
+              </div>
             </div>
-            <hr />
-            <div className="cart-total-details">
-              <p>Delivery Fee</p>
-              <p>₹{getTotalCartAmount && getTotalCartAmount() === 0 ? 0 : 2}</p>
-            </div>
-            <hr />
-            <div className="cart-total-details">
-              <b>Total</b>
-              <b>
-                ₹
-                {getTotalCartAmount
-                  ? getTotalCartAmount() === 0
-                    ? 0
-                    : getTotalCartAmount() + 2
-                  : 0}
-              </b>
-            </div>
+            <button onClick={() => navigate("/placeorder")}>
+              PROCEED TO CHECKOUT
+            </button>
           </div>
-          <button onClick={() => navigate("/order")}>
-            PROCEED TO CHECKOUT
-          </button>
-        </div>
 
-        <div className="cart-promocode">
-          <div>
-            <p>If you have a promocode, Enter it here</p>
-            <div className="cart-promocode-input">
-              <input type="text" placeholder="promo code" />
-              <button>Submit</button>
+          <div className="cart-promocode">
+            <div>
+              <p>If you have a promocode, Enter it here</p>
+              <div className="cart-promocode-input">
+                <input type="text" placeholder="promo code" />
+                <button>Submit</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

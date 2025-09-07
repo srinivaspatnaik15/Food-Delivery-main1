@@ -15,8 +15,9 @@ const MyOrders = () => {
       const response = await axios.post(
         url + "/api/order/userorders",
         {},
-        { headers: { token } }
+        { headers: { Authorization: `Bearer ${token}` } } // ✅ FIXED
       );
+
       if (response.data.success && Array.isArray(response.data.data)) {
         setData(response.data.data.reverse()); // latest orders first
       } else {
