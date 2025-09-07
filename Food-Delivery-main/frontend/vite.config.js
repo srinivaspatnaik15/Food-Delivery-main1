@@ -1,15 +1,20 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
-  plugins: [react()],
-  server: {
-    historyApiFallback: true, // 🔥 allows refresh in dev
-  },
-  preview: {
-    historyApiFallback: true, // 🔥 allows refresh in prod
-  },
+  plugins: [
+    react(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: "public/_redirects",
+          dest: ".",
+        },
+      ],
+    }),
+  ],
   build: {
-    outDir: "dist", // make sure build goes to dist
+    outDir: "dist",
   },
 });
