@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Cart = () => {
   const {
@@ -9,7 +10,7 @@ const Cart = () => {
     cartItems = {},
     removeFromCart,
     getTotalCartAmount,
-    url
+    url,
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
@@ -17,6 +18,13 @@ const Cart = () => {
   const deliveryFee = totalAmount === 0 ? 0 : 2;
 
   const hasItems = Object.values(cartItems).some((qty) => qty > 0);
+
+  const handleProceed = () => {
+    toast.info("Redirecting to checkout…");
+    setTimeout(() => {
+      navigate("/order");
+    }, 800); // small delay for UX
+  };
 
   return (
     <div className="cart">
@@ -89,9 +97,7 @@ const Cart = () => {
                 <b>₹{totalAmount + deliveryFee}</b>
               </div>
             </div>
-            <button onClick={() => navigate("/placeorder")}>
-              PROCEED TO CHECKOUT
-            </button>
+            <button onClick={handleProceed}>PROCEED TO CHECKOUT</button>
           </div>
 
           <div className="cart-promocode">

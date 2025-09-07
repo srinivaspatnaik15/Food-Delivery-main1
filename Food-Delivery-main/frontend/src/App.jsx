@@ -17,7 +17,6 @@ const App = () => {
     <>
       {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
       <div className="app">
-        <ToastContainer />
         <Navbar setShowLogin={setShowLogin} />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -25,8 +24,11 @@ const App = () => {
           <Route path="/order" element={<PlaceOrder />} />
           <Route path="/myorders" element={<MyOrders />} />
         </Routes>
+        <Footer />
       </div>
-      <Footer />
+
+      {/* ✅ Keep ToastContainer outside layout */}
+      <ToastContainer position="top-right" autoClose={2000} />
     </>
   );
 };
