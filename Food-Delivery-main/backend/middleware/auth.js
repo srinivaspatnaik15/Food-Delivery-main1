@@ -1,4 +1,4 @@
-// middleware/authMiddleware.js
+// backend/middleware/auth.js
 import jwt from "jsonwebtoken";
 
 const authMiddleware = (req, res, next) => {
@@ -18,3 +18,4 @@ const authMiddleware = (req, res, next) => {
 };
 
 export default authMiddleware;
+
