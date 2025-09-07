@@ -3,7 +3,7 @@ import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "./PlaceOrder.css"; // optional for styling
+import "./PlaceOrder.css";
 
 const PlaceOrder = () => {
   const { cartItems, setCartItems, food_list, getTotalCartAmount, url, token, user } =
@@ -56,7 +56,7 @@ const PlaceOrder = () => {
       address: formData,
       items: orderItems,
       amount: total,
-      paymentMethod: "COD", // ✅ Cash on Delivery
+      paymentMethod: "COD",
     };
 
     try {
@@ -78,8 +78,9 @@ const PlaceOrder = () => {
   };
 
   return (
-    <div className="place-order">
-      <form className="place-order-left" onSubmit={placeOrder}>
+    <form className="place-order" onSubmit={placeOrder}>
+      {/* Left - Delivery Form */}
+      <div className="place-order-left">
         <h2>Delivery Information</h2>
         <div className="multi-fields">
           <input
@@ -159,8 +160,9 @@ const PlaceOrder = () => {
           onChange={handleChange}
           required
         />
-      </form>
+      </div>
 
+      {/* Right - Cart Totals */}
       <div className="place-order-right">
         <h2>Cart Totals</h2>
         <div className="cart-total-details">
@@ -177,11 +179,11 @@ const PlaceOrder = () => {
           <b>Total</b>
           <b>₹{total}</b>
         </div>
-        <button type="submit" className="place-order-btn" onClick={placeOrder}>
+        <button type="submit" className="place-order-btn">
           PLACE ORDER (CASH ON DELIVERY)
         </button>
       </div>
-    </div>
+    </form>
   );
 };
 
