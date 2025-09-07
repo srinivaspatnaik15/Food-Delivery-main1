@@ -20,11 +20,11 @@ const Cart = () => {
   const hasItems = Object.values(cartItems).some((qty) => qty > 0);
 
   const handleProceed = () => {
-    toast.info("Redirecting to checkout…");
-    setTimeout(() => {
-      navigate("/order");
-    }, 800); // small delay for UX
-  };
+  toast.info("Redirecting to checkout…");
+  setTimeout(() => {
+    navigate("/placeorder"); // ✅ match App.jsx route
+  }, 800);
+};
 
   return (
     <div className="cart">
