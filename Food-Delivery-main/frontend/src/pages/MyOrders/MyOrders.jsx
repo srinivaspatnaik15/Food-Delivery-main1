@@ -24,7 +24,7 @@ const MyOrders = () => {
       );
 
       if (response.data.success && Array.isArray(response.data.data)) {
-        setData(response.data.data.reverse()); // show latest orders first
+        setData(response.data.data.reverse()); // latest orders first
       } else {
         setData([]);
       }
@@ -39,7 +39,7 @@ const MyOrders = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [token]); // refetch when token changes
+  }, [token]);
 
   return (
     <div className="my-orders">
@@ -53,9 +53,7 @@ const MyOrders = () => {
 
       <div className="container">
         {data.map((order, index) => {
-          const orderDate = order?.createdAt
-            ? new Date(order.createdAt)
-            : null;
+          const orderDate = order?.date ? new Date(order.date) : null; // ✅ matches schema
 
           return (
             <div key={order._id || index} className="my-orders-order">
