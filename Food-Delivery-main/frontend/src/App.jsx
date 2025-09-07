@@ -21,13 +21,16 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/order" element={<PlaceOrder />} />
+          {/* ✅ Changed "/order" → "/placeorder" */}
+          <Route path="/placeorder" element={<PlaceOrder />} />
           <Route path="/myorders" element={<MyOrders />} />
+          {/* ✅ Catch-all for invalid routes */}
+          <Route path="*" element={<h2>Page Not Found</h2>} />
         </Routes>
         <Footer />
       </div>
 
-      {/* ✅ Keep ToastContainer outside layout */}
+      {/* ✅ ToastContainer kept outside layout */}
       <ToastContainer position="top-right" autoClose={2000} />
     </>
   );
